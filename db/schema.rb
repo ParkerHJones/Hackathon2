@@ -10,10 +10,42 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_16_172814) do
+ActiveRecord::Schema.define(version: 2021_01_16_175132) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "buildings", force: :cascade do |t|
+    t.integer "year_built"
+    t.string "type"
+    t.string "address"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_buildings_on_user_id"
+  end
+
+  create_table "jobs", force: :cascade do |t|
+    t.boolean "completed"
+    t.string "title"
+    t.float "pay"
+    t.text "description"
+    t.string "priority"
+    t.bigint "building_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["building_id"], name: "index_jobs_on_building_id"
+  end
+
+  create_table "notes", force: :cascade do |t|
+    t.string "title"
+    t.text "body"
+    t.string "picture"
+    t.bigint "job_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["job_id"], name: "index_notes_on_job_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "provider", default: "email", null: false
@@ -48,4 +80,7 @@ ActiveRecord::Schema.define(version: 2021_01_16_172814) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
+  add_foreign_key "buildings", "users"
+  add_foreign_key "jobs", "buildings"
+  add_foreign_key "notes", "jobs"
 end
